@@ -1,118 +1,118 @@
 #include <stdio.h>
-#include <conio.h>
-#include <Windows.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 #define MAX_BUFSIZE 1024
 
-char *concatstr(char *,...);
 void wi_fi_setting(void);
 
 void main(void)
 {
-	int select;
-
-	system("title ³ëÆ®ºÏ Wi-fi HotspotÈ­ ÇÁ·Î±×·¥ - Á¦ÀÛ.By Ä«°¡¹Ì³×");
-
+	int select = 0;
+	
+	system("title ë…¸íŠ¸ë¶ Wi-fi Hotspotí™” í”„ë¡œê·¸ë¨ - ì œì‘.By osm1892");
+	
 	do{
-		puts("1.....¿ÍÀÌÆÄÀÌ ¼³Á¤");
-		puts("2.....¿ÍÀÌÆÄÀÌ ÄÑ±â");
-		puts("3.....¿ÍÀÌÆÄÀÌ ²ô±â");
-		puts("4.....¿ÍÀÌÆÄÀÌ Á¦°Å");
-		puts("0.....ÇÁ·Î±×·¥ Á¾·á");
-		printf("¹øÈ£ ÀÔ·Â : ");
-		scanf_s("%d",&select);
-		fflush(stdin);
+		puts("1.....ì™€ì´íŒŒì´ ì„¤ì •");
+		puts("2.....ì™€ì´íŒŒì´ ì¼œê¸°");
+		puts("3.....ì™€ì´íŒŒì´ ë„ê¸°");
+		puts("4.....ì™€ì´íŒŒì´ ì œê±°");
+		puts("0.....í”„ë¡œê·¸ë¨ ì¢…ë£Œ");
+		printf("ë²ˆí˜¸ ì…ë ¥ : ");
+		scanf("%d",&select);
+		getchar();
 		switch(select)
 		{
-		case 1:
-			wi_fi_setting();
-			_getch();
-			break;
-		case 2:
-			system("netsh wlan start hostednetwork");
-			_getch();
-			break;
-		case 3:
-			system("netsh wlan stop hostednetwork");
-			_getch();
-			break;
-		case 4:
-			system("netsh wlan set hostednetwork mode=disallow");
-			_getch();
-			break;
-		case 0:		break;
-		default:
-			printf("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.");
-			_getch();
-			break;
+			case 1:
+				wi_fi_setting();
+				getchar();
+				break;
+			case 2:
+				system("netsh wlan start hostednetwork");
+				getchar();
+				break;
+			case 3:
+				system("netsh wlan stop hostednetwork");
+				getchar();
+				break;
+			case 4:
+				system("netsh wlan set hostednetwork mode=disallow");
+				getchar();
+				break;
+			case 0:
+				break;
+			default:
+				printf("ì˜ëª» ì…ë ¥í•˜ì…¨ìŠµë‹ˆë‹¤.");
+				getchar();
+				break;
 		}
 		system("cls");
 	}while(select);
 }
 
-char *concatstr(char *origin,...)
-{
-	va_list ap;
-	char *retval,*tmp;
-	long len = 0;
-
-	_crt_va_start(ap,origin);
-	len += strlen(origin);
-
-	while((tmp=_crt_va_arg(ap,char *))!=NULL)
-	{
-		len += strlen(tmp);
-	}
-	retval = (char *)calloc(len+1,sizeof(char));
-
-	_crt_va_end(ap);
-	_crt_va_start(ap,origin);
-	strcat(retval,origin);
-
-	while((tmp=_crt_va_arg(ap,char *))!=NULL)
-	{
-		strcat(retval,tmp);
-	}
-	_crt_va_end(ap);
-	return retval;
-}
-
 void wi_fi_setting(void)
 {
-	char buffer[2][MAX_BUFSIZE] = {0}, *retval;
-	int i , length;
-
+	char buffer[2][MAX_BUFSIZE] = {0}, retval[200] = {0}; // I thought this 200 size is enough.
+	int i = 0, length = 0, Exit = 0;
+	
 	system("cls");
-wi_fi_name:
-	printf("¿ÍÀÌÆÄÀÌ ³×Æ®¿öÅ©ÀÇ ÀÌ¸§À» ¼³Á¤ÇØÁÖ¼¼¿ä (ÃÖ´ë 16±ÛÀÚ ¿µ¾î,¼ıÀÚ¸¸ °¡´É)\n :");
-	gets(buffer[0]);
-	fflush(stdin);
-	length = strlen(buffer[0]);
-	if((length<=0) || (length>16)){
-		puts("±Û ±æÀÌ°¡ ¸ÂÁö ¾Ê½À´Ï´Ù. ´Ù½Ã ¼³Á¤ÇØÁÖ¼¼¿ä.");
-		_getch();
-		goto wi_fi_name;
+	while (!Exit)
+	{
+		Exit = 1;
+		printf("ì™€ì´íŒŒì´ ë„¤íŠ¸ì›Œí¬ì˜ ì´ë¦„ì„ ì„¤ì •í•´ì£¼ì„¸ìš” (ìµœëŒ€ 16ê¸€ì ì˜ì–´, ìˆ«ìë§Œ ê°€ëŠ¥)\n: ");
+		gets(buffer[0]);
+		getchar();
+		length = strlen(buffer[0]);
+		if (length <= 0 || 16 < length)
+		{
+			puts("ê¸€ ê¸¸ì´ê°€ ë§ì§€ ì•ŠìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì„¤ì •í•´ì£¼ì„¸ìš”.");
+			getchar();
+			Exit = 0;
+			continue;
+		}
+		for (i = 0; i < length; i++)
+		{
+			if (!isalpha(buffer[0][i]) && !isdigit(buffer[0][i]))
+			{
+				puts("ë„¤íŠ¸ì›Œí¬ ì´ë¦„ì´ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤.");
+				getchar();
+				Exit = 0;
+				break;
+			}
+		}
 	}
-	for(i = 0;i<length;i++){
-		if((isalpha(buffer[0][i])!=0) || (isdigit(buffer[0][i])!=0));
-		else{puts("³×Æ®¿öÅ© ÀÌ¸§ÀÌ Àß¸øµÇ¾ú½À´Ï´Ù.");	_getch();	goto wi_fi_name;}
+	Exit = 0;
+	
+	while (!Exit)
+	{
+		Exit = 1;
+		printf("ì™€ì´íŒŒì´ ë¹„ë°€ë²ˆí˜¸ë¥¼ ì„¤ì •í•´ì£¼ì„¸ìš” (ìµœì†Œ 8ê¸€ì/ìµœëŒ€ 63ê¸€ì ì˜ì–´,ìˆ«ìë§Œ ê°€ëŠ¥)\n :");
+		gets(buffer[1]);
+		getchar();
+		length = strlen(buffer[1]);
+		if(length < 8 || length > 63)
+		{
+			puts("ê¸€ ê¸¸ì´ê°€ ë§ì§€ ì•ŠìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì„¤ì •í•´ì£¼ì„¸ìš”.");
+			getchar();
+			Exit = 0;
+			continue;
+		}
+		for(i = 0; i < length; i++)
+		{
+			if (!isalpha(buffer[1][i]) && !isdigit(buffer[1][i]))
+			{
+				puts("ë¹„ë°€ë²ˆí˜¸ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤.");
+				getchar();
+				Exit = 0;
+				break;
+			}
+		}
 	}
-wi_fi_pass:
-	printf("¿ÍÀÌÆÄÀÌ ºñ¹Ğ¹øÈ£¸¦ ¼³Á¤ÇØÁÖ¼¼¿ä (ÃÖ¼Ò 8±ÛÀÚ/ÃÖ´ë 63±ÛÀÚ ¿µ¾î,¼ıÀÚ¸¸ °¡´É)\n :");
-	gets(buffer[1]);
-	fflush(stdin);
-	length = strlen(buffer[1]);
-	if((length<8) || (length>63)){
-		puts("±Û ±æÀÌ°¡ ¸ÂÁö ¾Ê½À´Ï´Ù. ´Ù½Ã ¼³Á¤ÇØÁÖ¼¼¿ä.");
-		_getch();
-		goto wi_fi_pass;
-	}
-	for(i = 0;i<length;i++){
-		if((isalpha(buffer[1][i])!=0) || (isdigit(buffer[1][i])!=0));
-		else{puts("ºñ¹Ğ¹øÈ£°¡ Àß¸øµÇ¾ú½À´Ï´Ù.");	_getch();	goto wi_fi_pass;}
-	}
+	
 	system("net start Wlansvc");
 	system("net start SharedAccess");
-	retval = concatstr("netsh wlan set hostednetwork mode=allow \"ssid=",buffer[0],"\" \"key=",buffer[1],"\" keyUsage=persistent",NULL);
+	sprintf(retval, "%s%s%s%s%s%s", "netsh wlan set hostednetwork mode=allow \"ssid=",buffer[0],"\" \"key=",buffer[1],"\" keyUsage=persistent", NULL); 
 	system(retval);
-	free(retval);
 }
+// This code was updated by osm1892
