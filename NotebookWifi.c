@@ -37,7 +37,10 @@ int main(void)
 	while (!select)
 	{
 		puts("현재는 Vista 이상의 윈도우 또는 Debian 계열의 리눅스 OS를 지원합니다.");
-		printf("윈도우 OS인 것으로 확인됩니다. Vista/7/8/10 버전이 맞습니까? (y/n) : ");
+		if (os == 1)
+			printf("윈도우 OS인 것으로 확인됩니다. Vista/7/8/10 버전이 맞습니까? (y/n) : ");
+		else if (os == 2)
+			printf("데비안 계열의 OS가 맞습니까? (y/n) : ");
 		scanf("%c", &select);
 		getchar();
 
