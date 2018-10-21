@@ -8,15 +8,31 @@
 int IsNetConnected(void);
 
 #if defined _WIN32
-#define OS 1
+#define CLEAR() system("cls")
+const int os = 1;
+#elif defined __linux__
+#define CLEAR() system("clear")
+const int os = 2;
+#else
+const int os = 0
+#endif
 
-void WiFiSetting(void);
+void WinWiFiSetting(void);
+void DebWifiSetting(void);
 
 int main(void)
 {
 	int select = 0;
 
-	system("title 노트북 Wi-fi Hotspot화 프로그램 - 제작.By 카카미네. 기여자: osm1892");
+	if (os == 0)
+	{
+		puts("죄송합니다. 지원하지 않는 OS입니다. 프로그램을 종료합니다.");
+		getchar();
+		return 0;
+	}
+
+	if (os == 1)
+		system("title 노트북 Wi-fi Hotspot화 프로그램 - 제작.By 카카미네. 기여자: osm1892");
 
 	while (!select)
 	{
@@ -29,58 +45,109 @@ int main(void)
 		{
 		case 'y':
 		case 'Y':
-			system("cls");
+			CLEAR();
 			break;
 		case 'n':
 		case 'N':
 			puts("프로그램을 종료합니다");
 			return 0;
 		default:
-			system("cls");
+			CLEAR();
 			select = 0;
 			break;
 		}
 	}
 
 	do {
-		puts("1.....와이파이 설정");
-		puts("2.....와이파이 켜기");
-		puts("3.....와이파이 끄기");
-		puts("4.....와이파이 제거");
-		puts("0.....프로그램 종료");
+		puts
+		(
+			"1.....와이파이 설정\n"
+			"2.....와이파이 켜기\n"
+			"3.....와이파이 끄기\n"
+			"4.....와이파이 제거\n"
+			"0.....프로그램 종료"
+		);
 		printf("번호 입력 : ");
 		scanf("%d", &select);
 		getchar();
 		switch (select)
 		{
-		case 1:
-			WiFiSetting();
-			getchar();
-			break;
-		case 2:
-			system("netsh wlan start hostednetwork");
-			getchar();
-			break;
-		case 3:
-			system("netsh wlan stop hostednetwork");
-			getchar();
-			break;
-		case 4:
-			system("netsh wlan set hostednetwork mode=disallow");
-			getchar();
-			break;
-		case 0:
-			return 0;
-		default:
-			printf("잘못 입력하셨습니다.");
-			getchar();
-			break;
+			case 1:
+				switch (os)
+				{
+					case 1:
+						WinFifiSetting();
+						getchar();
+						break;
+					case 2:
+						DebWiFiSetting();
+						getchar();
+						break;
+					default:
+						break;
+				}
+				break;
+			case 2:
+				switch (os)
+				{
+					case 1:
+						system("netsh wlan start hostednetwork");
+						getchar();
+						break;
+					case 2:
+						system("service hostapd start");
+						system("service dnsmasq start");
+						getchar();
+						break;
+					default:
+						break;
+				}
+				break;
+			case 3:
+				switch (os)
+				{
+					case 1:
+						system("netsh wlan stop hostednetwork");
+						getchar();
+						break;
+					case 2:
+						system("service hostapd stop");
+						system("service dnsmasq stop");
+						getchar();
+						break;
+					default:
+						break;
+				}
+				break;
+			case 4:
+				switch (os)
+				{
+					case 1:
+						system("netsh wlan set hostednetwork mode=disallow");
+						getchar();
+						break;
+					case 2:
+						system("sudo echo '0' > /proc/sys/net/ipv4/ip_forward");
+						system("sudo rm /etc/sysconfig/iptables");
+						system("sudo mv /etc/sysconfig/iptables.original /etc/sysconfig/iptables");
+						getchar();
+						break;
+					default:
+						break;
+				}
+				break;
+			case 0:
+				return 0;
+			default:
+				printf("잘못 입력하셨습니다.");
+				getchar();
+				break;
 		}
 		system("cls");
 	} while (select);
 }
 
-void WiFiSetting(void)
+void WinWiFiSetting(void)
 {
 	char buffer[MAX_BUFSIZE] = { 0 }, retval[200] = { 0 }; // I thought this 200 size is enough.
 	int i = 0, length = 0, isExit = 0;
@@ -145,77 +212,7 @@ void WiFiSetting(void)
 	system(retval);
 }
 
-#elif defined __linux__
-#define OS 2
-
-void WiFiSetting(void);
-
-int main(void)
-{
-	int select = 0;
-
-	while (!select)
-	{
-		puts("현재는 Vista 이상의 윈도우 또는 Debian 계열의 리눅스 OS를 지원합니다.");
-		printf("Debian, Ubuntu, 또는 Mint OS가 맞습니까? (y/n) : ");
-		scanf("%c", &select);
-		getchar();
-
-		switch (select)
-		{
-		case 'y':
-		case 'Y':
-			system("clear");
-			break;
-		case 'n':
-		case 'N':
-			puts("프로그램을 종료합니다.");
-			return 0;
-		default:
-			system("clear");
-			select = 0;
-			break;
-		}
-	}
-
-	puts("1.....와이파이 설정");
-	puts("2.....와이파이 켜기");
-	puts("3.....와이파이 끄기");
-	puts("4.....와이파이 제거");
-	puts("0.....프로그램 종료");
-	printf("번호 입력 : ");
-	scanf("%d", &select);
-	getchar();
-	switch (select)
-	{
-	case 1:
-		WiFiSetting();
-		break;
-	case 2:
-		system("service hostapd start");
-		system("service dnsmasq start");
-		break;
-	case 3:
-		system("service hostapd stop");
-		system("service dnsmasq stop");
-		break;
-	case 4:
-		system("sudo apt remove dnsmasq -y");
-		system("sudo apt remove hostapd -y");
-		system("sudo apt remove wvdial -y");
-		system("sudo echo '0' > /proc/sys/net/ipv4/ip_forward");
-		system("sudo rm /etc/sysconfig/iptables");
-		system("sudo mv /etc/sysconfig/iptables.original /etc/sysconfig/iptables");
-	case 0:
-		return 0;
-	default:
-		puts("잘못 입력하셨습니다.");
-		getchar();
-		break;
-	}
-}
-
-void WiFiSetting(void)
+void DebWiFiSetting(void)
 {
 	char buffer[MAX_BUFSIZE] = { 0 };
 	int isInstalled = 0, isExit = 0, length = 0, i = 0;
@@ -292,26 +289,26 @@ void WiFiSetting(void)
 
 	puts("설정을 시작합니다.");
 
-	fputs("log-facility=/var/log/dnsmasq.log\n", conf1);
-	fputs("#address=/#/10.0.0.1\n", conf1);
-	fputs("#address=/google.com/10.0.0.1\n", conf1);
-	fputs("interface=wlan0\n", conf1);
-	fputs("dhcp-range=10.0.0.10,10.0.0.250,12h\n", conf1);
-	fputs("dhcp-option=3,10.0.0.1\n", conf1);
-	fputs("dhcp-option=6,10.0.0.1\n", conf1);
-	fputs("#no-resolv\n", conf1);
-	fputs("log-queries\n", conf1);
+	fputs
+	(
+		"log-facility=/var/log/dnsmasq.log\n"
+		"#address=/#/10.0.0.1\n"
+		"#address=/google.com/10.0.0.1\n"
+		"interface=wlan0\n"
+		"dhcp-range=10.0.0.10,10.0.0.250,12h\n"
+		"dhcp-option=3,10.0.0.1\n"
+		"dhcp-option=6,10.0.0.1\n"
+		"#no-resolv\n"
+		"log-queries\n", conf1
+	);
 	fclose(conf1);
+
 	system("sudo rm /etc/dnsmasq.conf");
 	system("sudo mv ./conf1 /etc/dnsmasq.conf");
-
 	system("sudo service dnsmasq start");
-
 	system("sudo ifconfig wlan0 up");
 	system("sudo ifconfig wlan0 10.0.0.1/24");
-
 	system("sudo cp /etc/sysconfig/iptables /etc/sysconfig/iptables.original");
-
 	system("sudo iptables -t nat -F");
 	system("sudo iptables -F");
 	system("sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE");
@@ -319,11 +316,14 @@ void WiFiSetting(void)
 	system("sudo echo '1' > /proc/sys/net/ipv4/ip_forward");
 	system("sudo service iptables save");
 
+	fputs
+	(
+		"interface=wlan0\n"
+		"driver=nl80211\n"
+		"channel=1\n\n"
+		"ssid=", conf2
+	);
 
-	fputs("interface=wlan0\n", conf2);
-	fputs("driver=nl80211\n", conf2);
-	fputs("channel=1\n\n", conf2);
-	fputs("ssid=", conf2);
 	while (!isExit)
 	{
 		isExit = 1;
@@ -350,8 +350,11 @@ void WiFiSetting(void)
 		}
 	}
 	fputs(buffer, conf2);
-	fputs("\nwpa=2\n", conf2);
-	fputs("wpa_passphrase=", conf2);
+	fputs
+	(
+		"\nwpa=2\n"
+		"wpa_passphrase=", conf2
+	);
 	while (!isExit)
 	{
 		isExit = 1;
@@ -377,33 +380,25 @@ void WiFiSetting(void)
 			}
 		}
 	}
-	fputs("\nwpa_key_mgmt=WPA-PSK\n", conf2);
-	fputs("wpa_pairwise=CCMP\n", conf2);
-	fputs("# Change the broadcasted/multicasted keys after this many seconds.\n", conf2);
-	fputs("wpa_group_rekey=600\n", conf2); // 이 변경 주기를 너무 길게 설정하면 보안에 문제가 발생 할 수 있습니다.
-	fputs("# Change the master key after this many seconds. Master key is used as a basis\n", conf2);
-	fputs("wpa_gmk_rekey=86400\n", conf2); // 마찬가지로, 이 주기를 너무 길게 설정하시면 보안에 문제가 발생할 수 있습니다. 하지만 너무 짧게 설정 할 경우, 끊김이 잦을 수 있습니다.
+	fputs
+	(
+		"\nwpa_key_mgmt=WPA-PSK\n"
+		"wpa_pairwise=CCMP\n"
+		"# Change the broadcasted/multicasted keys after this many seconds.\n"
+		"wpa_group_rekey=600\n" // 이 변경 주기를 너무 길게 설정하면 보안에 문제가 발생 할 수 있습니다.
+		"# Change the master key after this many seconds. Master key is used as a basis\n"
+		"wpa_gmk_rekey=86400\n", conf2 // 마찬가지로, 이 주기를 너무 길게 설정하시면 보안에 문제가 발생할 수 있습니다. 하지만 너무 짧게 설정 할 경우, 끊김이 잦을 수 있습니다.
+	);
 	fclose(conf2);
 	system("sudo rm /etc/hostapd/hostapd.conf");
 	system("sudo mv ./conf2 /etc/hostapd/hostapd.conf");
 	system("sudo service hostapd start");
 	return;
 }
-#else
-#define OS 0
-
-int main(void)
-{
-	puts("죄송합니다. 지원하지 않는 OS로 확인됩니다. 프로그램을 종료합니다.");
-	getchar();
-	return 0;
-}
-
-#endif
 
 int IsNetConnected(void) // 네트워크 연결 여부를 확인합니다.
 {
-	if (OS == 1) // 윈도우용
+	if (os == 1) // 윈도우용
 	{
 		if (system("ping www.google.com -t 2 > null") == 0)
 		{
